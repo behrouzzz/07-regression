@@ -30,6 +30,9 @@ wlsq <- function(x, w) {
 }
 wlsq(x,w)
 
+# Alternative:
+lm(x ~ rep(1, length(x)) - 1, weights = w)
+
 
 ## Question 2
 # Consider the following data set
@@ -106,6 +109,11 @@ x <- c(0.8, 0.47, 0.51, 0.73, 0.36, 0.58, 0.57, 0.85, 0.44, 0.42)
 w <- rep(1, length(x))
 wlsq(x,w)
 
+# Alternative:
+lm(x ~ rep(1, length(x)) - 1)
+
+# Alternative 2:
+cor(x, rep(1, length(x)))
 
 ## Question 10
 # Let the slope having fit Y as the outcome and X as the predictor be denoted as β1. Let the slope from fitting X as the outcome and Y as the predictor be denoted as γ1. Suppose that you divide β1 by γ1; in other words consider β1/γ1. What is this ratio always equal to?
@@ -118,5 +126,17 @@ x <- galton$parent - mean(galton$parent)
 lm(y~x)
 lm(x~y)
 
-# Let β1 = Cor(Y,X) and γ1 = Cor(X,Y). Then β1/γ1 = Cor(Y,X) / Cor(X,Y) = 1 since Cor(Y,X) = Cor(X,Y)
 
+# Models:
+# Y = β0 + β1X
+# X = γ0 + γ1Y
+#
+# Then from lectures 03-ols & 05-stat-linear-reg,
+# β1 = Cor(Y,X) * Sd(Y) / Sd(X)
+# γ1 = Cor(X,Y) * Sd(X) / Sd(Y)
+#
+# So,
+# β1/γ1 = Sd(Y)^2 / Sd(X)^2
+# since Cor(Y,X) = Cor(X,Y)
+#
+# β1/γ1 = Var(Y) / Var(X)
