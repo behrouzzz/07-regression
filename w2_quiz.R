@@ -25,7 +25,7 @@ n <- length(x)
 # sigma <- sqrt( sum(resid(fit)^2) / (n - 2) ); sigma
 ssx <- sum((x - mean(x))^2)
 seBeta1 <- summary(fit)$sigma / sqrt(ssx)
-ts <- (beta1 - 0) / seBeta1
+ts <- (beta1 - 0) / seBeta1; ts
 
 pBeta1 <- 2 * pt(abs(ts), df = n-2, lower.tail = FALSE); pBeta1
 

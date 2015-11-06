@@ -110,17 +110,23 @@ w <- rep(1, length(x))
 wlsq(x,w)
 
 # Alternative:
-<<<<<<< HEAD
 lm(x ~ w - 1)
 
 # Alternative 2 (lecture 03-ols): (doesn't work because w is all ones and so slope is zero or infinity
 cor(x,w)
-=======
-lm(x ~ rep(1, length(x)) - 1)
 
-# Alternative 2:
-cor(x, rep(1, length(x)))
->>>>>>> 89d8343956dcc1999e45b649621ce3fb995d1c26
+# Alternative 3: actually, in derivation notes, equation for slope (beta1) is:
+# beta1 = \sum (yi * xi) / \sum (xi)^2
+(x %*% w) / (w %*% w)
+
+# Test variance equation for w (vector of all ones)
+var_w <- 0
+mn_w <- mean(w)
+for (i in w) {
+    var_w <- var_w + (i - mn_w)^2
+}
+var_w
+
 
 ## Question 10
 # Let the slope having fit Y as the outcome and X as the predictor be denoted as β1. Let the slope from fitting X as the outcome and Y as the predictor be denoted as γ1. Suppose that you divide β1 by γ1; in other words consider β1/γ1. What is this ratio always equal to?
