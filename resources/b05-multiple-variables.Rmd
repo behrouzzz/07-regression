@@ -35,13 +35,13 @@ runif(1)
 
 ## Multivariable regression
 * We have an entire class on prediction and machine learning, so we'll focus on modeling.
-    * Prediction has a different set of criteria, needs for interpretability and standards for generalizability.
-    * In modeling, our interest lies in parsimonious, interpretable representations of the data that enhance our understanding of the phenomena under study.
-    * A model is a lense through which to look at your data. (I attribute this quote to Scott Zeger)
-    * Under this philosophy, what's the right model? Whatever model connects the data to a true, parsimonious statement about what you're studying.
+* Prediction has a different set of criteria, needs for interpretability and standards for generalizability.
+* In modeling, our interest lies in parsimonious, interpretable representations of the data that enhance our understanding of the phenomena under study.
+* A model is a lense through which to look at your data. (I attribute this quote to Scott Zeger)
+* Under this philosophy, what's the right model? Whatever model connects the data to a true, parsimonious statement about what you're studying.
 * There are nearly uncontable ways that a model can be wrong, in this lecture, we'll focus on variable inclusion and exclusion.
 * Like nearly all aspects of statistics, good modeling decisions are context dependent.
-    * A good model for prediction versus one for studying mechanisms versus one for trying to establish causal effects may not be the same.
+* A good model for prediction versus one for studying mechanisms versus one for trying to establish causal effects may not be the same.
 
 ---
 
@@ -125,7 +125,7 @@ was highly related to `x1`.
 * We don't know $\sigma$, so we can only estimate the increase in the actual standard error of the coefficients for including a regressor.
 * However, $\sigma$ drops out of the relative standard errors. If one sequentially adds variables, one can check the variance (or sd) inflation for including each one.
 * When the other regressors are actually orthogonal to the regressor of interest, then there is no variance inflation.
-* The variance inflation factor (VIF) is the increase in the variance for the ith regressor compared to the ideal setting where it is orthogonal to the other regressors.
+* The $\textbf{variance inflation factor (VIF)}$ is the increase in the variance for the ith regressor compared to the ideal setting where it is orthogonal to the other regressors.
     * (The square root of the VIF is the increase in the sd ...)
 * Remember, variance inflation is only part of the picture. We want to include certain variables, even if they dramatically inflate our variance. 
 
@@ -193,5 +193,10 @@ fit3 <- update(fit1, Fertility ~ Agriculture + Examination + Education)
 fit5 <- update(fit1, Fertility ~ Agriculture + Examination + Education + Catholic + Infant.Mortality)
 anova(fit1, fit3, fit5)
 ```
+
+Other things to consider:
+
+* non-linearity
+* non-normality
 
 "All models are wrong, some models are useful." -- George E.P. Box (1919-2013) (statistician)
