@@ -167,13 +167,13 @@ y = 1 + x + x2 + x3 + rnorm(n, sd = .1)
 ey = resid(lm(y ~ x2 + x3))
 ex = resid(lm(x ~ x2 + x3))
 sum(ey * ex) / sum(ex ^ 2)</code></pre>
-<pre><code>[1] 1.0067</code></pre>
+<pre><code>[1] 1.002776</code></pre>
 <pre class="r"><code>coef(lm(ey ~ ex - 1))</code></pre>
-<pre><code>    ex 
-1.0067 </code></pre>
+<pre><code>      ex 
+1.002776 </code></pre>
 <pre class="r"><code>coef(lm(y ~ x + x2 + x3)) </code></pre>
 <pre><code>(Intercept)           x          x2          x3 
-  1.0086095   1.0066996   1.0068021   0.9970049 </code></pre>
+  1.0024201   1.0027764   0.9874839   1.0143754 </code></pre>
 <p></br></p>
 <div id="joe-thu-05-nov-2015" class="section level4">
 <h4>Joe | Thu 05 Nov, 2015</h4>
@@ -181,20 +181,20 @@ sum(ey * ex) / sum(ex ^ 2)</code></pre>
 <pre class="r"><code>ey = resid(lm(y ~ x + x3))
 ex2 = resid(lm(x2 ~ x + x3))
 sum(ey * ex2) / sum(ex2 ^ 2)</code></pre>
-<pre><code>[1] 1.006802</code></pre>
+<pre><code>[1] 0.9874839</code></pre>
 <pre class="r"><code>coef(lm(ey ~ ex2 - 1))</code></pre>
-<pre><code>     ex2 
-1.006802 </code></pre>
+<pre><code>      ex2 
+0.9874839 </code></pre>
 <pre class="r"><code>ey = resid(lm(y ~ x + x2))
 ex3 = resid(lm(x3 ~ x + x2))
 sum(ey * ex3) / sum(ex3 ^ 2)</code></pre>
-<pre><code>[1] 0.9970049</code></pre>
+<pre><code>[1] 1.014375</code></pre>
 <pre class="r"><code>coef(lm(ey ~ ex3 - 1))</code></pre>
-<pre><code>      ex3 
-0.9970049 </code></pre>
+<pre><code>     ex3 
+1.014375 </code></pre>
 <pre class="r"><code>coef(lm(y ~ x + x2 + x3)) </code></pre>
 <pre><code>(Intercept)           x          x2          x3 
-  1.0086095   1.0066996   1.0068021   0.9970049 </code></pre>
+  1.0024201   1.0027764   0.9874839   1.0143754 </code></pre>
 <hr />
 </div>
 </div>

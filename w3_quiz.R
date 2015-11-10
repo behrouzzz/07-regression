@@ -66,7 +66,6 @@ anova(fit1, fit2, fit3)
 # Consider the mtcars data set. Fit a model with mpg as the outcome that includes number of cylinders as a factor variable and weight inlcuded in the model as
 summary(lm(mpg ~ I(wt * 0.5) + factor(cyl), data = mtcars))
 summary(lm(mpg ~ wt + factor(cyl), data = mtcars))
-summary(lm(mpg ~ I(wt) + factor(cyl), data = mtcars))
 # How is the wt coefficient interpretted?
 #
 ######################################
@@ -81,6 +80,8 @@ summary(lm(mpg ~ I(wt) + factor(cyl), data = mtcars))
 ######################################
 ## CORRECT (4TH ATTEMPT)
 # The estimated expected change in MPG per one ton increase in weight for a specific number of cylinders (4, 6, 8).
+#
+# This is because 1000lbs is HALF A TON. Larger gradient I(wt * 0.5) = -6.411 (vs wt = -3.2056) means change in MPG per DOUBLE 1000lbs -> 2000lbs -> TON.
 ######################################
 
 
