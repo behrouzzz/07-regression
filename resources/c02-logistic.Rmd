@@ -206,9 +206,10 @@ exp(confint(logRegRavens))
 
 #### Joe | Tue 10 Nov, 2015
 
-- Exponentiated confidence interval (0.996229662 1.303304) covers 1, which means variate "ravensScore" is potentially NOT significant.
-
-- NOTE: exp(0) = 1, which is an odds of 1 -> p = 0.5, which is intepreted as no effect of the regressor on the outcome.
+- Intercept = 0.1863 is odds of winning with a score of 0.
+- Slope = 1.112 is 11% increasing in winning with every 1 point increase in score. So slope is the `odds ratio`.
+- Exponentiated confidence interval (0.996229662 1.303304) covers odds of 1, which means variate "ravensScore" is potentially NOT significant.
+- NOTE: exp(0) = 1; an odds of 1 -> p = 0.5, which is intepreted as no effect of the regressor on the outcome.
 
 ---
 
