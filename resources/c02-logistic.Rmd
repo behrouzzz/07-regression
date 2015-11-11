@@ -208,7 +208,7 @@ exp(confint(logRegRavens))
 
 - Exponentiated confidence interval (0.996229662 1.303304) covers 1, which means variate "ravensScore" is potentially NOT significant.
 
-- NOTE: exp(0) = 1, which is why value of 1 is equivalent to mean 0 (in non-exponentiated case).
+- NOTE: exp(0) = 1, which is an odds of 1 -> p = 0.5, which is intepreted as no effect of the regressor on the outcome.
 
 ---
 
