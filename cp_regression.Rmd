@@ -1,0 +1,61 @@
+---
+title: "Course Project - 07 Regression"
+author: "Joe Nguyen"
+date: "19 November 2015"
+output: html_document
+---
+
+```{r, echo=FALSE}
+# Change working directory
+dirBase <- "/home/joe/Documents/01-coursera/01-data-science"
+dirWorking <- "/07-regression"
+setwd(file.path(dirBase, dirWorking))
+rm(list = ls())
+```
+
+
+# Executive Summary
+
+This report aims to explore two questions:
+
+1. Is an automatic or manual transmission better for MPG?
+2. Quantify the MPG difference between automatic and manual transmissions
+
+Cars are more fuel efficient if their miles per gallon (MPG) rating is lower.
+
+## Explore `mtcars` dataset
+
+```{r}
+data("mtcars")
+head(mtcars,2)
+tail(mtcars,2)
+```
+
+Variable `am` is transmission type (0 = automatic, 1 = manual) (from R documentation `?mtcars`).
+
+```{r, fig.align='center', fig.height=4, fig.width=4}
+require(ggplot2)
+mtcars$am <- factor(mtcars$am, labels = c("Automatic", "Manual"))
+ggplot(aes(am, mpg), data = mtcars) +
+    geom_violin() + 
+    ggtitle("MPG Distribution for Transmission Type") + 
+    xlab("Transmission Type") + ylab("MPG")
+```
+
+
+## Model Fitting
+
+We can treat `am` as a factor variable with two levels and perform regression with the linear model:
+
+$$ Y_i = \beta_0 + X_{i1} \beta_1 + \epsilon_i $$
+
+Using least squares, $\hat{\beta}_0$ is the mean estimate for "automatic" and $\hat{\beta}_0 + \hat{\beta}_1$ is the mean estimate for "manual".
+
+
+```{r}
+modLm <- lm(mpg ~ am - 1, data = mtcars)
+summary(modLm)
+
+```
+
+
