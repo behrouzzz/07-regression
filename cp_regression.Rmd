@@ -1,8 +1,10 @@
 ---
-title: "Course Project - 07 Regression"
+title: "07 Regression - Course Project"
 author: "Joe Nguyen"
-date: "19 November 2015"
-output: html_document
+date: "20 November 2015"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
 ---
 
 ```{r, echo=FALSE}
@@ -16,46 +18,176 @@ rm(list = ls())
 
 # Executive Summary
 
-This report aims to explore two questions:
+This report explores whether an "automatic" or "manual" transmission is better for miles per gallon (MPG) and quantifies the MPG difference between the transmission types. Cars are more fuel efficient if their MPG rating is lower. A linear regression analysis shows that "automatic" achieves lower MPG with an average of 17.15 and 95% confidence interval (14.85, 19.44) compared with 24.39 and (21.62, 27.17) for "manual".
 
-1. Is an automatic or manual transmission better for MPG?
-2. Quantify the MPG difference between automatic and manual transmissions
+# Explore `mtcars` dataset
 
-Cars are more fuel efficient if their miles per gallon (MPG) rating is lower.
+```{r, echo=FALSE}
+data("mtcars")
+head(mtcars,1)
+```
+
+Variable `am` is transmission type (0 = automatic, 1 = manual) (from R documentation `?mtcars`). A distribution plot of `am` for MPG is shown in Fig. 1.
+
+
+# Model Selection and Fitting
+
+We treat `am` as a factor variable with two levels and perform regression with the linear model: $Y_i = \beta_0 + X_{i1} \beta_1 + \epsilon_i$. Using least squares, $\hat{\beta}_0$ is the mean estimate for "automatic" and $\hat{\beta}_0 + \hat{\beta}_1$ is the mean estimate for "manual". The coefficient $\beta_1$ is the change in the mean of "manual" from "automatic".
+
+```{r, echo=FALSE}
+mtcars$am <- factor(mtcars$am, labels = c("Automatic", "Manual"))
+mpgMn <- with(mtcars, aggregate(mpg, by = list(am), mean))
+
+modLm <- lm(mpg ~ am, data = mtcars)
+summary(modLm)$coef
+```
+
+The estimated means from the linear model for "automatic" ($\hat{\beta}_0 = 17.147$) and "manual" ($\hat{\beta}_0 + \hat{\beta}_1 = 17.147 + 7.245 = 24.392$) correspond to the means (points) in Fig. 1.
+
+
+## Model Selection
+
+First, we propose that **no other regressors** are required in our linear model to answer the question *Is an automatic or manual transmission better for MPG?* The regressor `am` directly captures the affect of transmission type on MPG. However, we investigate whether additional regressors have a strong influence on explaining MPG. The goal of model building is to balance bias and variance inflation: 1) if we include unrelated regressors, the standard errors of all regressors increase, and 2) if we include addition regressors that are correlated with current regressors, the variance increases. We can evaluate the variance inflation factor (VIF) of each regressor. As a general rule,
+
+| VIF | Status of Regressors |
+| --- | --- |
+| VIF = 1 | Uncorrelated (and zero inflation) |
+| 1 < VIF < 5 | Moderately correlated |
+| VIF > 5 to 10 | Highly correlated |
+
+```{r, echo=FALSE}
+library(car)
+modFull <- lm(mpg ~ ., data = mtcars)
+vif(modFull)
+```
+
+We would choose `disp` as an additional regressor because it is highly correlated with the other regressors, suggesting `disp` can well-explain MPG in this dataset. This correlation between `disp` and `am` is evident in Fig. 2 where "manual" cars tend to have low displacement (`disp`) and "automatic" cars have high displacement.
+
+We can further use analysis of variance (ANOVA) and examine the F-test p-value for significance by including `disp` with `am`. From the appendix, we can see the F-test p-value for the model `mpg ~ am + disp` of 1.397e-07 strongly suggests `disp` accounts for a lot of variation in MPG, while adding all the remaining regressors has a smaller p-value (0.03157). We can also see the (explained) sum of squares of `disp` (420.62) is 64% larger than the sum of squares of adding the remaining regressors (152.79). Thus, `disp` accounts for a large porportion of the variability. Note:
+
+**Total sum of squares = Explained sum of squares + Residual sum of squares (RSS)**
+
+```{r, echo=FALSE, eval=FALSE}
+(420.62 - 152.79) / 420.62 * 100
+```
+
+
+# Diagnostics
+
+We investigate the quality of the original model (`mpg ~ am`) fit by examining residual variation. As seen in Fig. 3, there is no systematic patterns or outlying data points. We also examine the data points in the dataset to observe whether or not individual data points have high influence (e.g. leverage) on the model. Diagnostics include `dffits`, `dfbetas`, `cooks.distance` and `hatvalues`. The results suggest all data points well-represent the model, and results are shown in the appendix.
+
+
+# Regression Inference
+
+Performing a t-test, a p-value of 0.000285 (< 0.05) suggests there is significance in the difference of MPG between "automatic" and "manual". According to this model and data, "automatic" is potentially better than "manual" with a lower MPG. The very small p-value (0.000285) indicates there is little likelihood the difference is due to chance.
+
+
+## Confidence and Prediction Intervals
+
+The 95% confidence intervals for the MPG mean of "automatic" and "manual" are shown below.
+
+|     | Mean | Lower | Upper |
+| --- | ---  | ---   | ---   |
+| Automatic | 17.15 | 14.85 | 19.44 |
+| Manual | 24.39 | 21.62 | 27.17 |
+
+The 95% prediction intervals are similarly shown below; they are wider than the confidence intervals.
+
+|     | Mean | Lower | Upper |
+| --- | ---  | ---   | ---   |
+| Automatic | 17.15 | 6.88 | 27.42 |
+| Manual | 24.39 | 14.00 | 34.78 |
+
+
+\newpage
+
+# Appendix
 
 ## Explore `mtcars` dataset
 
-```{r}
-data("mtcars")
-head(mtcars,2)
-tail(mtcars,2)
-```
-
-Variable `am` is transmission type (0 = automatic, 1 = manual) (from R documentation `?mtcars`).
-
-```{r, fig.align='center', fig.height=4, fig.width=4}
+```{r, fig.align='center', fig.height=2.5, fig.width=4}
 require(ggplot2)
-mtcars$am <- factor(mtcars$am, labels = c("Automatic", "Manual"))
 ggplot(aes(am, mpg), data = mtcars) +
     geom_violin() + 
+    geom_point(aes(x = levels(am), y = mpgMn$x), size = 3) + 
     ggtitle("MPG Distribution for Transmission Type") + 
     xlab("Transmission Type") + ylab("MPG")
 ```
+**Figure 1** MPG distribution for transmission type ("automatic" or "manual"). The dots represent the mean MPG for each transmission type.
 
 
-## Model Fitting
+## Model Selection and Fitting
 
-We can treat `am` as a factor variable with two levels and perform regression with the linear model:
+### Linear Regression Code
 
-$$ Y_i = \beta_0 + X_{i1} \beta_1 + \epsilon_i $$
-
-Using least squares, $\hat{\beta}_0$ is the mean estimate for "automatic" and $\hat{\beta}_0 + \hat{\beta}_1$ is the mean estimate for "manual".
-
-
-```{r}
-modLm <- lm(mpg ~ am - 1, data = mtcars)
-summary(modLm)
-
+```{r, echo=TRUE, eval=FALSE}
+mtcars$am <- factor(mtcars$am, labels = c("Automatic", "Manual"))
+mpgMn <- with(mtcars, aggregate(mpg, by = list(am), mean))
+modLm <- lm(mpg ~ am, data = mtcars)
+summary(modLm)$coef
 ```
 
+
+```{r, fig.align='center', fig.width=5, fig.height=2}
+ggplot(aes(disp, mpg, colour = am), data = mtcars) + 
+    geom_point(size = 3, alpha = 0.7)
+```
+**Figure 2** Engine displacement (`disp`) is correlated with transmission type (`am`) and can well-explain the outcome MPG. "Manual" cars tend to have lower displacement and higher MPG, while "automatic" cars tend to have higher displacement and lower MPG.
+
+### VIF Code
+
+```{r, echo=TRUE, eval=FALSE}
+library(car)
+modFull <- lm(mpg ~ ., data = mtcars)
+vif(modFull)
+```
+
+### ANOVA Code
+
+```{r, echo=TRUE, eval=TRUE}
+mod_1 <- update(modLm, mpg ~ am + disp)
+features <- names(subset(mtcars, select = -c(mpg, am, disp)))
+form <- as.formula(paste("mpg ~ am + disp + ", paste(features, collapse = "+")))
+mod_2 <- update(modLm, form)
+anova(modLm, mod_1, mod_2)
+```
+
+
+## Diagnostics
+
+```{r, fig.align='center', fig.width=4, fig.height=2.5}
+par(mfrow = c(2,2))
+modLmDf <- data.frame(Fitted = predict(modLm),
+                      Residuals = resid(modLm))
+ggplot(data = modLmDf, aes(x = Fitted, y = Residuals)) + 
+    geom_point(size = 3, alpha = 0.7)
+```
+**Figure 3** Residuals plot for predicted values according to the linear model `lm(mpg ~ am)`.
+
+
+```{r, eval=FALSE}
+# Diagnostics when ith point is deleted in fitting the model:
+# Change in outcome
+dffits(modLm)
+# Change in individual coefficients
+dfbetas(modLm)
+# Overall change in coefficients
+cooks.distance(modLm)
+# Leverage
+hatvalues(modLm)
+```
+
+
+## Regression Inference
+
+```{r}
+modLmMn <- lm(mpg ~ am - 1, data = mtcars)
+modCoef <- summary(modLmMn)$coef
+# # vectors stored as columns by default
+# modCoef[,1] + qt(0.975, df = modLmMn$df) * modCoef[,2] %*% t(c(-1,1))
+predict(modLm, newdata = data.frame(am = as.factor(c("Automatic", "Manual"))),
+        interval = "confidence")
+predict(modLm, newdata = data.frame(am = as.factor(c("Automatic", "Manual"))),
+        interval = "prediction")
+```
 
